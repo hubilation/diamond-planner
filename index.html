@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Diamond Planner</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Diamond Planner</h1>
+            <div class="controls">
+                <label for="diamondCount">Number of Diamonds:</label>
+                <input type="range" id="diamondCount" min="1" max="10" value="6">
+                <span id="countDisplay">6</span>
+            </div>
+        </header>
+        
+        <main>
+            <div class="app-layout">
+                <div class="main-content">
+                    <div class="diamond-container">
+                        <div id="diamondDisplay" class="diamond-display"></div>
+                    </div>
+                    
+                    <div class="history-section">
+                        <h3>Saved Palettes</h3>
+                        <div id="paletteHistory" class="palette-history"></div>
+                    </div>
+                </div>
+                
+                <div class="color-controls">
+                    <div class="section-header">
+                        <h3>Diamond Colors</h3>
+                        <button id="savePaletteBtn" class="save-btn">Save Palette</button>
+                    </div>
+                    <div id="colorPickers" class="color-pickers"></div>
+                </div>
+            </div>
+        </main>
+    </div>
+    
+    <script src="script.js"></script>
+</body>
+</html>
