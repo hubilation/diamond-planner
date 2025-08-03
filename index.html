@@ -32,13 +32,39 @@
                 
                 <div class="color-controls">
                     <div class="section-header">
-                        <h3>Diamond Colors</h3>
-                        <button id="savePaletteBtn" class="save-btn">Save Palette</button>
+                        <h3>Colors</h3>
+                        <button id="savePaletteBtn" class="save-btn">Save</button>
                     </div>
-                    <div id="colorPickers" class="color-pickers"></div>
+                    <div id="colorSquares" class="color-squares"></div>
                 </div>
             </div>
         </main>
+    </div>
+    
+    <!-- Color Picker Modal -->
+    <div id="colorModal" class="color-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 id="modalTitle">Edit Color</h4>
+                <button id="closeModal" class="close-btn">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="color-picker-container">
+                    <div class="color-preview-large" id="modalColorPreview"></div>
+                    <input type="color" id="modalColorInput" class="color-input">
+                </div>
+                <div class="rgb-section">
+                    <div class="rgb-labels">
+                        <span>R</span><span>G</span><span>B</span>
+                    </div>
+                    <div class="rgb-inputs">
+                        <input type="number" id="modalRInput" class="rgb-input" min="0" max="255">
+                        <input type="number" id="modalGInput" class="rgb-input" min="0" max="255">
+                        <input type="number" id="modalBInput" class="rgb-input" min="0" max="255">
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
     
     <script src="script.js"></script>

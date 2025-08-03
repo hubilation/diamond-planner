@@ -11,6 +11,7 @@ class DiamondPlanner {
             '#f59e0b', '#10b981', '#3b82f6', '#8b5cf6'
         ];
         this.storageKey = 'diamond-planner-history';
+        this.currentColorIndex = null;
         
         this.init();
     }
@@ -18,7 +19,7 @@ class DiamondPlanner {
     init() {
         this.setupEventListeners();
         this.generateDiamonds();
-        this.generateColorPickers();
+        this.generateColorSquares();
         this.renderHistory();
     }
     
@@ -32,7 +33,7 @@ class DiamondPlanner {
             countDisplay.textContent = this.diamondCount;
             this.updateColors();
             this.generateDiamonds();
-            this.generateColorPickers();
+            this.generateColorSquares();
         });
         
         saveBtn.addEventListener('click', () => {
@@ -46,6 +47,8 @@ class DiamondPlanner {
                 }
             }
         });
+        
+        this.setupModalEventListeners();
     }
     
     updateColors() {
@@ -84,112 +87,138 @@ class DiamondPlanner {
         }
     }
     
-    generateColorPickers() {
-        const container = document.getElementById('colorPickers');
+    generateColorSquares() {
+        const container = document.getElementById('colorSquares');
         container.innerHTML = '';
         
         for (let i = 0; i < this.diamondCount; i++) {
-            const pickerItem = document.createElement('div');
-            pickerItem.className = 'color-picker-item';
+            const colorSquare = document.createElement('div');
+            colorSquare.className = 'color-square';
+            colorSquare.style.backgroundColor = this.colors[i];
+            colorSquare.dataset.index = i + 1;
             
-            const label = document.createElement('label');
-            label.className = 'color-picker-label';
-            label.textContent = `Diamond ${i + 1} (${i === 0 ? 'Outermost' : i === this.diamondCount - 1 ? 'Innermost' : 'Middle'})`;
-            
-            const pickerContainer = document.createElement('div');
-            pickerContainer.className = 'color-picker-container';
-            
-            const colorPreview = document.createElement('div');
-            colorPreview.className = 'color-preview';
-            colorPreview.style.backgroundColor = this.colors[i];
-            
-            const colorInput = document.createElement('input');
-            colorInput.type = 'color';
-            colorInput.className = 'color-input';
-            colorInput.value = this.colors[i];
-            
-            const rgbContainer = document.createElement('div');
-            const rgbLabels = document.createElement('div');
-            rgbLabels.className = 'rgb-labels';
-            rgbLabels.innerHTML = '<span>R</span><span>G</span><span>B</span>';
-            
-            const rgbInputs = document.createElement('div');
-            rgbInputs.className = 'rgb-inputs';
-            
-            const rgb = this.hexToRgb(this.colors[i]);
-            
-            const rInput = document.createElement('input');
-            rInput.type = 'number';
-            rInput.className = 'rgb-input';
-            rInput.min = '0';
-            rInput.max = '255';
-            rInput.value = rgb.r;
-            
-            const gInput = document.createElement('input');
-            gInput.type = 'number';
-            gInput.className = 'rgb-input';
-            gInput.min = '0';
-            gInput.max = '255';
-            gInput.value = rgb.g;
-            
-            const bInput = document.createElement('input');
-            bInput.type = 'number';
-            bInput.className = 'rgb-input';
-            bInput.min = '0';
-            bInput.max = '255';
-            bInput.value = rgb.b;
-            
-            rgbInputs.appendChild(rInput);
-            rgbInputs.appendChild(gInput);
-            rgbInputs.appendChild(bInput);
-            
-            const updateColor = (newColor) => {
-                this.colors[i] = newColor;
-                colorPreview.style.backgroundColor = newColor;
-                colorInput.value = newColor;
-                
-                const rgb = this.hexToRgb(newColor);
-                rInput.value = rgb.r;
-                gInput.value = rgb.g;
-                bInput.value = rgb.b;
-                
-                this.updateDiamondColor(i, newColor);
-            };
-            
-            const updateFromRgb = () => {
-                const r = Math.max(0, Math.min(255, parseInt(rInput.value) || 0));
-                const g = Math.max(0, Math.min(255, parseInt(gInput.value) || 0));
-                const b = Math.max(0, Math.min(255, parseInt(bInput.value) || 0));
-                
-                rInput.value = r;
-                gInput.value = g;
-                bInput.value = b;
-                
-                const hexColor = this.rgbToHex(r, g, b);
-                updateColor(hexColor);
-            };
-            
-            colorInput.addEventListener('input', (e) => {
-                updateColor(e.target.value);
+            colorSquare.addEventListener('click', () => {
+                this.openColorModal(i);
             });
             
-            colorPreview.addEventListener('click', () => {
-                colorInput.click();
-            });
+            container.appendChild(colorSquare);
+        }
+    }
+    
+    setupModalEventListeners() {
+        const modal = document.getElementById('colorModal');
+        const closeBtn = document.getElementById('closeModal');
+        const modalColorInput = document.getElementById('modalColorInput');
+        const modalColorPreview = document.getElementById('modalColorPreview');
+        const modalRInput = document.getElementById('modalRInput');
+        const modalGInput = document.getElementById('modalGInput');
+        const modalBInput = document.getElementById('modalBInput');
+        
+        // Close modal when clicking close button
+        closeBtn.addEventListener('click', () => {
+            this.closeColorModal();
+        });
+        
+        // Close modal when clicking outside
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) {
+                this.closeColorModal();
+            }
+        });
+        
+        // Color input change
+        modalColorInput.addEventListener('input', (e) => {
+            this.updateModalColor(e.target.value);
+        });
+        
+        // Preview click opens color input
+        modalColorPreview.addEventListener('click', () => {
+            modalColorInput.click();
+        });
+        
+        // RGB input changes
+        const updateFromModalRgb = () => {
+            const r = Math.max(0, Math.min(255, parseInt(modalRInput.value) || 0));
+            const g = Math.max(0, Math.min(255, parseInt(modalGInput.value) || 0));
+            const b = Math.max(0, Math.min(255, parseInt(modalBInput.value) || 0));
             
-            rInput.addEventListener('input', updateFromRgb);
-            gInput.addEventListener('input', updateFromRgb);
-            bInput.addEventListener('input', updateFromRgb);
+            modalRInput.value = r;
+            modalGInput.value = g;
+            modalBInput.value = b;
             
-            pickerContainer.appendChild(colorPreview);
-            pickerContainer.appendChild(colorInput);
-            
-            pickerItem.appendChild(label);
-            pickerItem.appendChild(pickerContainer);
-            pickerItem.appendChild(rgbLabels);
-            pickerItem.appendChild(rgbInputs);
-            
-            container.appendChild(pickerItem);
+            const hexColor = this.rgbToHex(r, g, b);
+            this.updateModalColor(hexColor);
+        };
+        
+        modalRInput.addEventListener('input', updateFromModalRgb);
+        modalGInput.addEventListener('input', updateFromModalRgb);
+        modalBInput.addEventListener('input', updateFromModalRgb);
+    }
+    
+    openColorModal(colorIndex) {
+        this.currentColorIndex = colorIndex;
+        const modal = document.getElementById('colorModal');
+        const modalTitle = document.getElementById('modalTitle');
+        const modalColorInput = document.getElementById('modalColorInput');
+        const modalColorPreview = document.getElementById('modalColorPreview');
+        const modalRInput = document.getElementById('modalRInput');
+        const modalGInput = document.getElementById('modalGInput');
+        const modalBInput = document.getElementById('modalBInput');
+        
+        const currentColor = this.colors[colorIndex];
+        const diamondLabel = colorIndex === 0 ? 'Outermost' : 
+                           colorIndex === this.diamondCount - 1 ? 'Innermost' : 'Middle';
+        
+        modalTitle.textContent = `Diamond ${colorIndex + 1} (${diamondLabel})`;
+        modalColorInput.value = currentColor;
+        modalColorPreview.style.backgroundColor = currentColor;
+        
+        const rgb = this.hexToRgb(currentColor);
+        modalRInput.value = rgb.r;
+        modalGInput.value = rgb.g;
+        modalBInput.value = rgb.b;
+        
+        modal.classList.add('show');
+        document.body.style.overflow = 'hidden'; // Prevent background scroll
+    }
+    
+    closeColorModal() {
+        const modal = document.getElementById('colorModal');
+        modal.classList.remove('show');
+        document.body.style.overflow = ''; // Restore scroll
+        this.currentColorIndex = null;
+    }
+    
+    updateModalColor(newColor) {
+        if (this.currentColorIndex === null) return;
+        
+        const modalColorInput = document.getElementById('modalColorInput');
+        const modalColorPreview = document.getElementById('modalColorPreview');
+        const modalRInput = document.getElementById('modalRInput');
+        const modalGInput = document.getElementById('modalGInput');
+        const modalBInput = document.getElementById('modalBInput');
+        
+        // Update the color in the main array
+        this.colors[this.currentColorIndex] = newColor;
+        
+        // Update modal UI
+        modalColorInput.value = newColor;
+        modalColorPreview.style.backgroundColor = newColor;
+        
+        const rgb = this.hexToRgb(newColor);
+        modalRInput.value = rgb.r;
+        modalGInput.value = rgb.g;
+        modalBInput.value = rgb.b;
+        
+        // Update diamond and color square
+        this.updateDiamondColor(this.currentColorIndex, newColor);
+        this.updateColorSquare(this.currentColorIndex, newColor);
+    }
+    
+    updateColorSquare(index, color) {
+        const colorSquares = document.querySelectorAll('.color-square');
+        if (colorSquares[index]) {
+            colorSquares[index].style.backgroundColor = color;
         }
     }
     
@@ -265,7 +294,7 @@ class DiamondPlanner {
             document.getElementById('countDisplay').textContent = this.diamondCount;
             
             this.generateDiamonds();
-            this.generateColorPickers();
+            this.generateColorSquares();
         }
     }
     
