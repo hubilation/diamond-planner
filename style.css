@@ -54,17 +54,11 @@ h1 {
 }
 
 .app-layout {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) 80px;
-    gap: 20px;
-    align-items: start;
-}
-
-.main-content {
     display: flex;
     flex-direction: column;
     gap: 20px;
 }
+
 
 .diamond-container {
     background: rgba(255, 255, 255, 0.95);
@@ -103,8 +97,8 @@ h1 {
 
 .color-controls {
     background: rgba(255, 255, 255, 0.95);
-    padding: 15px;
-    border-radius: 15px;
+    padding: 20px;
+    border-radius: 20px;
     box-shadow: 0 15px 40px rgba(0,0,0,0.1);
 }
 
@@ -117,8 +111,9 @@ h1 {
 /* Color Squares */
 .color-squares {
     display: flex;
-    flex-direction: column;
-    gap: 8px;
+    flex-wrap: wrap;
+    gap: 12px;
+    justify-content: center;
 }
 
 .color-square {
@@ -431,12 +426,15 @@ h1 {
 
 @media (max-width: 768px) {
     .app-layout {
-        grid-template-columns: minmax(0, 1fr) 70px;
         gap: 15px;
     }
     
     .diamond-container {
         min-height: 300px;
+        padding: 15px;
+    }
+    
+    .color-controls {
         padding: 15px;
     }
     
@@ -449,6 +447,10 @@ h1 {
         height: 45px;
     }
     
+    .color-squares {
+        gap: 10px;
+    }
+    
     .container {
         padding: 15px;
     }
@@ -456,7 +458,6 @@ h1 {
 
 @media (max-width: 480px) {
     .app-layout {
-        grid-template-columns: minmax(0, 1fr) 60px;
         gap: 10px;
     }
     
@@ -465,13 +466,17 @@ h1 {
         padding: 10px;
     }
     
+    .color-controls {
+        padding: 10px;
+    }
+    
     .color-square {
         width: 40px;
         height: 40px;
     }
     
-    .color-controls {
-        padding: 10px;
+    .color-squares {
+        gap: 8px;
     }
     
     h1 {
