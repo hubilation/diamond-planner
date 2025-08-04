@@ -63,16 +63,19 @@ class DiamondPlanner {
         const container = document.getElementById('diamondDisplay');
         container.innerHTML = '';
         
-        const baseSize = 350;
-        const minSize = 40;
-        const sizeStep = (baseSize - minSize) / Math.max(1, this.diamondCount - 1);
+        // Calculate max size based on container dimensions with padding
+        const containerRect = container.getBoundingClientRect();
+        const containerSize = Math.min(containerRect.width, containerRect.height) - 80; // 40px padding on each side
+        const maxSize = Math.max(containerSize * 0.9, 200); // Ensure minimum readable size
+        const minSize = 30;
+        const sizeStep = (maxSize - minSize) / Math.max(1, this.diamondCount - 1);
         
         for (let i = 0; i < this.diamondCount; i++) {
             const diamond = document.createElement('div');
             diamond.className = 'diamond';
             diamond.dataset.index = i;
             
-            const size = baseSize - (i * sizeStep);
+            const size = maxSize - (i * sizeStep);
             diamond.style.width = `${size}px`;
             diamond.style.height = `${size}px`;
             diamond.style.backgroundColor = this.colors[i];
@@ -80,8 +83,6 @@ class DiamondPlanner {
             diamond.style.top = '50%';
             diamond.style.left = '50%';
             diamond.style.transform = 'translate(-50%, -50%) rotate(45deg)';
-            
-            console.log(`Diamond ${i}: size=${size}px, color=${this.colors[i]}, zIndex=${this.diamondCount - i}`);
             
             container.appendChild(diamond);
         }
