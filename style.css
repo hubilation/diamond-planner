@@ -55,7 +55,7 @@ h1 {
 
 .app-layout {
     display: grid;
-    grid-template-columns: 1fr 80px;
+    grid-template-columns: minmax(0, 1fr) 80px;
     gap: 20px;
     align-items: start;
 }
@@ -76,6 +76,8 @@ h1 {
     align-items: center;
     min-height: 400px;
     overflow: hidden;
+    width: 100%;
+    box-sizing: border-box;
 }
 
 .diamond-display {
@@ -429,7 +431,7 @@ h1 {
 
 @media (max-width: 768px) {
     .app-layout {
-        grid-template-columns: 1fr 70px;
+        grid-template-columns: minmax(0, 1fr) 70px;
         gap: 15px;
     }
     
@@ -454,7 +456,7 @@ h1 {
 
 @media (max-width: 480px) {
     .app-layout {
-        grid-template-columns: 1fr 60px;
+        grid-template-columns: minmax(0, 1fr) 60px;
         gap: 10px;
     }
     
